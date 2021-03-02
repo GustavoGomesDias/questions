@@ -1,0 +1,29 @@
+<%- include('partials/header.ejs') %>
+<body>
+    <!-- 
+        container => engloba todo o resto (é uma class bootstrap)
+
+        card => separa o header e o body (como podemos ver)
+    -->
+    <%- include('partials/navbar.ejs') %>
+    <div class="container">
+        <div class="card" id="formulario-pergunta">
+            <div class="card-header">
+                <h3>Realizar pergunta</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/salvarpergunta">
+                    <label>Titulo:</label>
+                    <input type="text" placeholder="Titulo" class="form-control" name="titulo">
+                    <br><label>Descrição:</label>
+                    <textarea placeholder="Descreva sua pergunta aqui" class="form-control" name="descricao"></textarea>
+                    <!-- class form-control é uma classe do bootstrap -->
+
+                    <br>
+                    <button class="btn btn-success">Perguntar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<%- include('partials/footer.ejs') %>
