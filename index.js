@@ -1,7 +1,9 @@
 const express = require('express');
 const app = express();
 const connection = require('./database/database');
-const Pergunta = require('./database/Pergunta')
+const Pergunta = require('./database/Pergunta');
+const Resposta = require('./database/Resposta');
+
 
 // Database
 connection
@@ -73,13 +75,33 @@ app.get('/pergunta/:id', (req, res) => {
         }
     }).then(pergunta => {
       if(pergunta != undefined){
-        res.render('pergunta', {
-            pergunta: pergunta
+        
+        Resposta.findAll({
+            where: {perguntaId : pergunta.id},
+            order: [
+                ['id', 'DESC']
+            ]
+        }).then(respostas =>{
+            res.render('pergunta', {
+                pergunta: pergunta,
+                respostas: respostas
+            });
         });
       }else{
         res.redirect('/');
       }
     });
+});
+
+app.post('/responder', (req, res) => {
+    const corpo = req.body.corpo;
+    const perguntaId = req.body.pergunta;
+    Resposta.create({
+        corpo: corpo,
+        perguntaId: perguntaId
+    }).then(() => {
+        res.redirect('/pergunta/'+perguntaId);
+    }).catch(err => console.log(err));
 });
 
 app.listen(8080, () => {
