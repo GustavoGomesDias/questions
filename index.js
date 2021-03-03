@@ -1,6 +1,17 @@
 const express = require('express');
 const app = express();
+const connection = require('./database/database');
+const Pergunta = require('./database/Pergunta')
 
+// Database
+connection
+    .authenticate()
+    .then(() => {
+        console.log("Conexão feita com o DB");
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 
 // Seto que o motor de html que vou usar é o ejs
 app.set('view engine', 'ejs');
@@ -17,9 +28,20 @@ app.use(express.json());
 
 // Rotas
 app.get('/', (req, res) => {
-
-    res.render("index");
+    // findAll = SELECT * FROM
+    Pergunta
+        .findAll({ raw: true, order: [
+            ['id', 'desc'] // ASC = crescente | DESC = decrescente (aqui é pra ordenar)
+        ] })
+        .then(perguntas => {
+            // Tô enviando as peguntas para a renderização da /, agora eu posso usa-la no html
+            res.render("index", {
+                perguntas: perguntas
+            });
+        }).catch(err => console.log(err));
 });
+
+// raw: true => seta pra trazer apenas os dados
 
 app.get('/perguntar', (req, res) => {
     
@@ -30,7 +52,34 @@ app.get('/perguntar', (req, res) => {
 app.post("/salvarpergunta", (req, res) => {
     const titulo = req.body.titulo;
     const descricao = req.body.descricao;
-    res.send("Nome " + titulo + ", " + "Descrição " + descricao);
+
+    // create realiza o INSERT
+    Pergunta.create({
+        titulo: titulo,
+        descricao: descricao 
+    }).then(() => {
+        res.redirect("/");
+    }).catch(err => console.log(err));
+
+});
+
+app.get('/pergunta/:id', (req, res) => {
+    const id = req.params.id;
+
+    // findOne => método do sequelize que busca 1 dado
+    Pergunta.findOne({
+        where: {
+            id: id
+        }
+    }).then(pergunta => {
+      if(pergunta != undefined){
+        res.render('pergunta', {
+            pergunta: pergunta
+        });
+      }else{
+        res.redirect('/');
+      }
+    });
 });
 
 app.listen(8080, () => {
