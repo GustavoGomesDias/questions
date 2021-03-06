@@ -11,7 +11,8 @@ Site simples de onde você faz uma pergunta e alguém vem e responde!
 * Nodemon;
 * Sequelize;
     * Mysql2 (para configurar o Sequelize para usar o mysql);
-* EJS.
+* EJS;
+* Bootstrap na versão 4.8.
 
 ## 🎉 Para iniciar o projeto
 1. Instale todas es tec's usadas junto do Node JS:
